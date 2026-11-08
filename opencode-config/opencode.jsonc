@@ -1,0 +1,48 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "local-llm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Local LLM (FastAPI / llama.cpp)",
+      "options": {
+        "baseURL": "http://fastapi:8000/v1",
+        "apiKey": "dummy"
+      },
+      "models": {
+        "gemma4:12B": {
+          "name": "gemma4:12B"
+        },
+        "gemma4:26B": {
+          "name": "gemma4:26B"
+        },
+        "ornith": {
+          "name": "ornith"
+        },
+        "ornith-1.5:35B": {
+          "name": "ornith-1.5:35B"
+        },
+        "ornith-1.5:9B": {
+          "name": "ornith-1.5:9B"
+        },
+        "ornith:9B": {
+          "name": "ornith:9B"
+        },
+        "qwen2.5-coder:14B": {
+          "name": "qwen2.5-coder:14B"
+        },
+        "qwen3.5:9B": {
+          "name": "qwen3.5:9B"
+        },
+        "qwen3:14B": {
+          "name": "qwen3:14B"
+        }
+      }
+    }
+  },
+  "model": "local-llm/ornith-1.5:35B",
+  "agent": {
+    "build": {
+      "prompt": "あなたは優秀なAIプログラミングアシスタントです。ユーザーとのすべてのコミュニケーションは日本語で行ってください。コードのコメントやファイル名などの技術的な部分は英語のままで問題ありませんが、説明・回答・提案はすべて日本語で行ってください。"
+    }
+  }
+}
