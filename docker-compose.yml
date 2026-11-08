@@ -8,7 +8,7 @@ services:
     image: ghcr.io/ggml-org/llama.cpp:server-cuda
     container_name: llama-cpp
     ports:
-      - "8081:8080" # ホスト側8081からAPI確認可能
+      - "8081:8080" # ホスト側8081からAPI確認可能 (OpenAI互換 /v1)
     volumes:
       - ./presets.ini:/presets.ini:ro
       - ./models:/models # ホストのGGUFモデル配置用
@@ -33,27 +33,7 @@ services:
               capabilities: [gpu]
 
   # ============================================================================
-  # 2. FastAPI プロキシ (Tool Calling スキーマ正規化 & API互換仲介)
-  # ============================================================================
-  fastapi:
-    build:
-      context: ./FastAPI
-      dockerfile: Dockerfile
-    container_name: fastapi-proxy
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./FastAPI/app:/app
-    environment:
-      - LLM_BACKEND=llama.cpp
-      - LLAMA_CPP_BASE_URL=http://llama-cpp:8080
-      - DEBUG_LLM_PROXY=true
-    restart: unless-stopped
-    depends_on:
-      - llama-cpp
-
-  # ============================================================================
-  # 3. OpenCode サンドボックス (ホスト環境を汚さない使い捨て開発環境)
+  # 2. OpenCode サンドボックス (ホスト環境を汚さない使い捨て開発環境)
   # ============================================================================
   opencode-sandbox:
     build:
@@ -65,10 +45,10 @@ services:
     stdin_open: true
     command: ["/bin/bash"]
     environment:
-      - LLM_BASE_URL=http://fastapi:8000/v1
+      - LLM_BASE_URL=http://llama-cpp:8080/v1
       - LLAMA_CPP_BASE_URL=http://llama-cpp:8080/v1
       - DEFAULT_MODEL=ornith-1.5:35B
-      - OPENAI_BASE_URL=http://fastapi:8000/v1
+      - OPENAI_BASE_URL=http://llama-cpp:8080/v1
       - OPENAI_API_KEY=dummy
     volumes:
       # 作業コードの永続化（ホストのカレント ./workspace と同期）
@@ -82,7 +62,7 @@ services:
       - ./switch-model.py:/usr/local/bin/switch-model:ro
       - ./switch-model.py:/home/openvscode-server/switch-model.py:ro
     depends_on:
-      - fastapi
+      - llama-cpp
 
 volumes:
   ollama_data:

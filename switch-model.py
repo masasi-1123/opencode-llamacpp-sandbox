@@ -123,8 +123,8 @@ def update_opencode_config(new_model_id, all_models):
     """opencode.jsonc を更新する"""
     os.makedirs(os.path.dirname(OPENCODE_CONFIG_PATH), exist_ok=True)
 
-    # コンテナ内からのアクセスを前提とし、FastAPI経由で接続
-    target_base_url = "http://fastapi:8000/v1"
+    # コンテナ内からのアクセスを前提とし、llama.cppへ直接接続
+    target_base_url = os.getenv("LLAMA_CPP_BASE_URL", "http://llama-cpp:8080/v1")
 
     # モデルディクショナリを生成
     models_dict = {}
